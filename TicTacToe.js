@@ -2,6 +2,7 @@
  * Created by matthias on 29/05/17.
  */
 $(document).ready(function () {
+    var cCoup = 0;
     var adversaire;
     var bot;
     var caseBot;
@@ -31,12 +32,16 @@ $(document).ready(function () {
     var gestionClick = function(i){
         if(xIsNext && !tab[i].html() && !winner){
             tab[i].html("X");
+            cCoup++;
+            xIsNext = !xIsNext;
         }
         else if(!tab[i].html() && !winner){
             tab[i].html("O");
+            cCoup++;
+            xIsNext = !xIsNext;
         }
         findWinner();
-        xIsNext = !xIsNext;
+
         if(bot === "X" && xIsNext && !winner){
             botPlay();
         }
@@ -45,11 +50,17 @@ $(document).ready(function () {
         }
         if(!winner)
             findWinner();
-        console.log(winner);
+        if(cCoup === 9){
+            $(".info").html("Equality!");
+            bot = "";
+            setTimeout(resetBoard, 2000);
+        }
+
         if(winner){
 
             $(".info").html(winner + " has win!");
             bot = "";
+            setTimeout(resetBoard, 2000);
         }
     };
     var botPlay = function(){
@@ -57,12 +68,26 @@ $(document).ready(function () {
         if(!tab[caseBot].html()){
             tab[caseBot].html(bot);
             xIsNext = !xIsNext;
+            cCoup++;
         }
         else{
             botPlay();
         }
 
-    }
+    };
+    var resetBoard = function () {
+
+        xIsNext = true;
+        tab.forEach(function (elem) {
+            elem.html("");
+        })
+        $(".info").html(null);
+        winner = null;
+        $(".board").css("display", "none");
+        $(".select-adversaire").css("display", "initial");
+        cCoup = 0;
+    };
+
 
     tab[0].click(function () {
         gestionClick(0);
